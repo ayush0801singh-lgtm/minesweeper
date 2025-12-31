@@ -9,23 +9,40 @@ class MinesweeperGUI:
         self.root.title("Minesweeper")
 
         self.game = Minesweeper()
-        self.buttons = [[None for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+        self.buttons = [[None for _ in range(GRID_SIZE)]
+                        for _ in range(GRID_SIZE)]
 
         self._create_grid()
+        self._create_restart_button()
 
     def _create_grid(self):
-        for row in range(GRID_SIZE):
-            for col in range(GRID_SIZE):
-                button = tk.Button(
+        for r in range(GRID_SIZE):
+            for c in range(GRID_SIZE):
+                btn = tk.Button(
                     self.root,
                     width=2,
                     height=1,
                     font=("Arial", 14),
-                    command=lambda r=row, c=col: self.left_click(r, c)
+                    command=lambda r=r, c=c: self.left_click(r, c)
                 )
-                button.bind("<Button-3>", lambda event, r=row, c=col: self.right_click(r, c))
-                button.grid(row=row, column=col)
-                self.buttons[row][col] = button
+                btn.bind("<Button-3>",
+                         lambda e, r=r, c=c: self.right_click(r, c))
+                btn.grid(row=r, column=c)
+                self.buttons[r][c] = btn
+
+    def _create_restart_button(self):
+        restart_btn = tk.Button(
+            self.root,
+            text="Restart",
+            font=("Arial", 12),
+            command=self.restart_game
+        )
+        restart_btn.grid(
+            row=GRID_SIZE,
+            column=0,
+            columnspan=GRID_SIZE,
+            pady=5
+        )
 
     def left_click(self, r, c):
         if self.game.game_over or self.game.win:
@@ -39,8 +56,8 @@ class MinesweeperGUI:
         elif self.game.win:
             self.show_win()
 
-    def right_click(self, row, col):
-        cell = self.game.board[row][col]
+    def right_click(self, r, c):
+        cell = self.game.board[r][c]
         if cell.is_revealed:
             return
 
@@ -48,30 +65,34 @@ class MinesweeperGUI:
         self.update_ui()
 
     def update_ui(self):
-        for row in range(GRID_SIZE):
-            for col in range(GRID_SIZE):
-                cell = self.game.board[row][col]
-                button = self.buttons[row][col]
+        for r in range(GRID_SIZE):
+            for c in range(GRID_SIZE):
+                cell = self.game.board[r][c]
+                btn = self.buttons[r][c]
 
                 if cell.is_revealed:
                     if cell.is_mine:
-                        button.config(text="💣", bg="red", relief=tk.SUNKEN)
+                        btn.config(text="💣", bg="red", relief=tk.SUNKEN)
                     else:
-                        text = str(cell.adjacent_mines) if cell.adjacent_mines > 0 else ""
-                        button.config(text=text, bg="lightgray", relief=tk.SUNKEN)
+                        text = str(cell.adjacent_mines) if cell.adjacent_mines else ""
+                        btn.config(text=text, bg="lightgray", relief=tk.SUNKEN)
 
                 elif cell.is_flagged:
-                    button.config(text="🚩", fg="red")
+                    btn.config(text="🚩", fg="red")
 
                 else:
-                    button.config(text="", bg="SystemButtonFace", relief=tk.RAISED)
+                    btn.config(text="", bg="SystemButtonFace",
+                               relief=tk.RAISED, state="normal")
 
     def show_game_over(self):
-        for row in range(GRID_SIZE):
-            for col in range(GRID_SIZE):
-                cell = self.game.board[row][col]
+        for r in range(GRID_SIZE):
+            for c in range(GRID_SIZE):
+                cell = self.game.board[r][c]
                 if cell.is_mine:
-                    self.buttons[row][col].config(text="💣", bg="red")
+                    self.buttons[r][c].config(text="💣", bg="red")
+                self.buttons[r][c].config(state="disabled")
+
+        self.root.title("Minesweeper - Game Over")
 
     def show_win(self):
         for r in range(GRID_SIZE):
@@ -79,6 +100,19 @@ class MinesweeperGUI:
                 self.buttons[r][c].config(state="disabled")
 
         self.root.title("Minesweeper - You Win! 🎉")
+
+    def restart_game(self):
+        self.game = Minesweeper()
+        self.root.title("Minesweeper")
+
+        for r in range(GRID_SIZE):
+            for c in range(GRID_SIZE):
+                self.buttons[r][c].config(
+                    text="",
+                    bg="SystemButtonFace",
+                    relief=tk.RAISED,
+                    state="normal"
+                )
 
 
 if __name__ == "__main__":
