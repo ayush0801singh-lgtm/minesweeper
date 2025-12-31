@@ -6,6 +6,7 @@ from constants import GRID_SIZE, MINES_COUNT
 class Minesweeper:
     def __init__(self):
         self.game_over = False
+        self.win = False
         self.board = [[Cell(r, c) for c in range(GRID_SIZE)]
                       for r in range(GRID_SIZE)]
         self._place_mines()
@@ -54,3 +55,14 @@ class Minesweeper:
                     nr, nc = row + dr, col + dc
                     if 0 <= nr < GRID_SIZE and 0 <= nc < GRID_SIZE:
                         self.reveal(nr, nc)
+
+        if self.check_win():
+            self.win = True
+
+    def check_win(self):
+        for row in range(GRID_SIZE):
+            for col in range(GRID_SIZE):
+                cell = self.board[row][col]
+                if not cell.is_mine and not cell.is_revealed:
+                    return False
+        return True
