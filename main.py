@@ -27,15 +27,17 @@ class MinesweeperGUI:
                 button.grid(row=row, column=col)
                 self.buttons[row][col] = button
 
-    def left_click(self, row, col):
-        if self.game.game_over:
+    def left_click(self, r, c):
+        if self.game.game_over or self.game.win:
             return
 
-        self.game.reveal(row, col)
+        self.game.reveal(r, c)
         self.update_ui()
 
         if self.game.game_over:
             self.show_game_over()
+        elif self.game.win:
+            self.show_win()
 
     def right_click(self, row, col):
         cell = self.game.board[row][col]
@@ -70,6 +72,13 @@ class MinesweeperGUI:
                 cell = self.game.board[row][col]
                 if cell.is_mine:
                     self.buttons[row][col].config(text="💣", bg="red")
+
+    def show_win(self):
+        for r in range(GRID_SIZE):
+            for c in range(GRID_SIZE):
+                self.buttons[r][c].config(state="disabled")
+
+        self.root.title("Minesweeper - You Win! 🎉")
 
 
 if __name__ == "__main__":
