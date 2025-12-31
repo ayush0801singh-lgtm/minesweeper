@@ -20,5 +20,13 @@ DFS-based recursive cell reveal and clean object-oriented design.
 - Object-Oriented Programming
 
 ## How to Run
+
+### Prerequisites
+- Python 3.8 or higher
+- Tkinter (comes pre-installed with Python)
+
+### Steps
+1. Clone the repository or download the ZIP:
 ```bash
-python main.py
+git clone https://github.com/ayush0801singh-lgtm/minesweeper.git
+
