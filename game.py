@@ -17,7 +17,6 @@ class Minesweeper:
             [(r, c) for r in range(GRID_SIZE) for c in range(GRID_SIZE)],
             MINES_COUNT
         )
-
         for r, c in positions:
             self.board[r][c].is_mine = True
 
@@ -60,9 +59,9 @@ class Minesweeper:
             self.win = True
 
     def check_win(self):
-        for row in range(GRID_SIZE):
-            for col in range(GRID_SIZE):
-                cell = self.board[row][col]
+        for r in range(GRID_SIZE):
+            for c in range(GRID_SIZE):
+                cell = self.board[r][c]
                 if not cell.is_mine and not cell.is_revealed:
                     return False
         return True
